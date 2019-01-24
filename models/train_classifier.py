@@ -70,25 +70,35 @@ def tokenize(text):
 
 
 def build_model():
-    """ this function build a pipelined model for disaster
+    """ this function build a pipelined model based on grid search for disaster
     response.
-    refer to ../jupyter_notebook_workspace/ML Pipeline Preparation.ipynb
-    for more details about how the model parameters are obtained
     return:
         model: a pipelined model
     """
-    # build pipeline
+    # pipeline
     pipeline = Pipeline([
         ('text_pipeline', Pipeline([
-            ('vect', CountVectorizer(tokenizer=tokenize, stop_words='english')),
-            ('tfidf', TfidfTransformer(use_idf=False))
+            ('vect', CountVectorizer(tokenizer=tokenize)),
+            ('tfidf', TfidfTransformer())
         ])),
 
         ('clf', MultiOutputClassifier(SGDClassifier(
-            loss='log', n_jobs=-1, random_state=42, alpha=0.0001, tol=0.001)))# use SVM
+            loss='log', n_jobs=-1, random_state=42)))# use SVM
     ])
+
+    # grid parameters
+    parameters = {
+        'text_pipeline__vect__stop_words': (None, 'english'),
+        'text_pipeline__tfidf__use_idf': (True, False),
+        'clf__estimator__alpha': [0.0001, 0.001, 0.005],
+        'clf__estimator__tol': [1e-3, 1e-4, 1e-5]
+    }
+
+    # use grid search
+    cv = GridSearchCV(pipeline, parameters)
+
     # return
-    return pipeline
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -118,7 +128,7 @@ def save_model(model, model_filepath):
     model_filepath: path to save the model into
     return: None
     """
-    joblib.dump(model, model_filepath, compress=1)
+    joblib.dump(model.best_estimator_, model_filepath, compress=0)
 
 
 def main():
