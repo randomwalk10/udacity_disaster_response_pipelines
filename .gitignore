@@ -1,3 +1,5 @@
 
 *.out
 .ipynb_checkpoints
+*.db
+*.pkl
