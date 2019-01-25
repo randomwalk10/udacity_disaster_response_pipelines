@@ -3,3 +3,4 @@
 .ipynb_checkpoints
 *.db
 *.pkl
+jupyter_notebook_workspace

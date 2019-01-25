@@ -12,3 +12,8 @@
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+### Results:
+1. A SGDClassifier is implemented along with text processing in the pipeline.
+
+2. Average accuracy score(on test data) is 0.9461643238531108

@@ -37,11 +37,6 @@ def load_data(database_filepath):
     # do some data cleaning to remove classes with single values
     feature_names = ["id", "message", "original", "genre"]
     df = df.drop(feature_names, axis=1)
-    cls_to_drop = []
-    for label in df.columns:
-        if len(np.unique(df[label])) < 2:
-            cls_to_drop.append(label)
-    df = df.drop(cls_to_drop, axis=1)
     Y = df.values
     # get category_names
     category_names = df.columns.tolist()

@@ -40,12 +40,19 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
+    # genre distribution
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    # positive ratio of each category, ranked in descending order
+    df_ones = pd.DataFrame({'label': df.columns[4:],
+                            'one_ratio': [df[label].sum()/df.shape[0]
+                                          for label in df.columns[4:]]}
+                          ).sort_values('one_ratio', ascending=False)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
+        # genre distribution
         {
             'data': [
                 Bar(
@@ -61,6 +68,25 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        # positive ratio of each category
+        {
+            'data': [
+                Bar(
+                    x=df_ones.label.tolist(),
+                    y=df_ones.one_ratio.tolist()
+                )
+            ],
+
+            'layout': {
+                'title': 'Positive Ratios of Each Category',
+                'yaxis': {
+                    'title': "Ratio"
+                },
+                'xaxis': {
+                    'title': "Category"
                 }
             }
         }

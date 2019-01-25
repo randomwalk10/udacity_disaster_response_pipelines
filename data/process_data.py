@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -22,7 +23,7 @@ def load_data(messages_filepath, categories_filepath):
 def clean_data(df):
     """ this funcition perform data cleaning: 1) split
     `categories` into 36 columns with values converted into
-    numbers; 2) remove row duplicates
+    numbers; 2) remove row duplicates; 3) drop categories with single value.
     df: dataframe contains information about messages and categories
     return:
         df: a cleaned dataframe
@@ -49,6 +50,13 @@ def clean_data(df):
     df = pd.concat([df, categories], axis=1)
     # drop duplicate rows
     df = df.drop_duplicates()
+    # drop categories with single value
+    cat_to_drop = []
+    for label in df.columns[4:]:
+        if len(np.unique(df[label])) < 2:
+            cat_to_drop.append(label)
+    print("Categories with single class:", cat_to_drop)
+    df.drop(cat_to_drop, axis=1, inplace=True)
     # return
     return df
 
